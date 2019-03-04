@@ -30,6 +30,8 @@ public class SendHello extends BaseActor {
         if (request.getPerformOperation() != null && request.getPerformOperation().equals("sendToBadGreeter")) {
             pMsgBuilder.setTargetActorName("BadGreeter");
             pMsgBuilder.setMsgOption(MessageProtos.MessageOption.GET_BACK_RESPONSE);
+        } else if (request.getPerformOperation().equals("selfMessage")) {
+            pMsgBuilder.setTargetActorName("SendHello");
         } else {
             pMsgBuilder.setTargetActorName("HelloGreeter");
         }

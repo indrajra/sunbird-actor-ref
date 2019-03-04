@@ -36,5 +36,12 @@ public class Main {
                 .setPerformOperation("sendToBadGreeter")
                 .build();
         ActorCache.instance().get(Router.ROUTER_NAME).tell(toBadActor,null);
+
+        // Case 5 - Sending message to itself inadvertently - no looping
+        MessageProtos.Message selfMessage = MessageProtos.Message.newBuilder()
+                .setTargetActorName("SendHello")
+                .setPerformOperation("selfMessage")
+                .build();
+        ActorCache.instance().get(Router.ROUTER_NAME).tell(selfMessage,null);
     }
 }
