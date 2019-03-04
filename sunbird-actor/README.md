@@ -23,6 +23,11 @@ library for teams that may be new to distributed systems world.
     recommended for production use. The original Message.proto used by the protoc (protobuf compiler) is also available
     in the root of this library directory.
 
+3.  Router
+
+ /Router is a special actor created by the library that helps in routing messages. Even if there are no actors configured
+ in the system, there will be a /Router. So, supply a dispatcher configuration for this actor for sure. All the other actors
+ and /Router are siblings (not hierarchical).
 
 ### Example
 * [System1-example] (https://github.com/indrajra/sunbird-actor-ref/tree/master/system1-example)
