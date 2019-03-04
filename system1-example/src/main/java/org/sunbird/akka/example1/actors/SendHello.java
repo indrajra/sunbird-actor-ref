@@ -1,5 +1,8 @@
 package org.sunbird.akka.example1.actors;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.protobuf.Value;
 import org.sunbird.akka.config.SunbirdActor;
 import org.sunbird.akka.core.ActorCache;
 import org.sunbird.akka.core.BaseActor;
@@ -15,11 +18,18 @@ public class SendHello extends BaseActor {
     public void onReceive(MessageProtos.Message request) throws Throwable {
         MessageProtos.Message.Builder pMsgBuilder = MessageProtos.Message.newBuilder()
                 .setId(UUID.randomUUID().toString())
-                .setPayload("Ram")
                 .setPerformOperation("greet");
+        Value.Builder payloadBuilder = pMsgBuilder.getPayloadBuilder();
+        ObjectNode person = JsonNodeFactory.instance.objectNode();
+        person.put("name", "Ram");
+        person.put("age", 16);
+
+        payloadBuilder.setStringValue(person.toString());
+        pMsgBuilder.setPayload(payloadBuilder);
 
         if (request.getPerformOperation() != null && request.getPerformOperation().equals("sendToBadGreeter")) {
             pMsgBuilder.setTargetActorName("BadGreeter");
+            pMsgBuilder.setMsgOption(MessageProtos.MessageOption.GET_BACK_RESPONSE);
         } else {
             pMsgBuilder.setTargetActorName("HelloGreeter");
         }

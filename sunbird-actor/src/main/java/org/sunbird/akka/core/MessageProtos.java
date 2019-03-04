@@ -27,6 +27,7 @@ public final class MessageProtos {
      * <code>GET_BACK_RESPONSE = 1;</code>
      */
     GET_BACK_RESPONSE(1),
+    UNRECOGNIZED(-1),
     ;
 
     /**
@@ -40,6 +41,10 @@ public final class MessageProtos {
 
 
     public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
       return value;
     }
 
@@ -92,6 +97,9 @@ public final class MessageProtos {
         throw new java.lang.IllegalArgumentException(
           "EnumValueDescriptor is not for this type.");
       }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
       return VALUES[desc.getIndex()];
     }
 
@@ -109,83 +117,66 @@ public final class MessageProtos {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required string targetActorName = 1;</code>
-     */
-    boolean hasTargetActorName();
-    /**
-     * <code>required string targetActorName = 1;</code>
+     * <code>string targetActorName = 1;</code>
      */
     java.lang.String getTargetActorName();
     /**
-     * <code>required string targetActorName = 1;</code>
+     * <code>string targetActorName = 1;</code>
      */
     com.google.protobuf.ByteString
         getTargetActorNameBytes();
 
     /**
-     * <code>optional string sourceActorName = 2;</code>
-     */
-    boolean hasSourceActorName();
-    /**
-     * <code>optional string sourceActorName = 2;</code>
+     * <code>string sourceActorName = 2;</code>
      */
     java.lang.String getSourceActorName();
     /**
-     * <code>optional string sourceActorName = 2;</code>
+     * <code>string sourceActorName = 2;</code>
      */
     com.google.protobuf.ByteString
         getSourceActorNameBytes();
 
     /**
-     * <code>optional string performOperation = 3;</code>
-     */
-    boolean hasPerformOperation();
-    /**
-     * <code>optional string performOperation = 3;</code>
+     * <code>string performOperation = 3;</code>
      */
     java.lang.String getPerformOperation();
     /**
-     * <code>optional string performOperation = 3;</code>
+     * <code>string performOperation = 3;</code>
      */
     com.google.protobuf.ByteString
         getPerformOperationBytes();
 
     /**
-     * <code>optional string id = 4;</code>
-     */
-    boolean hasId();
-    /**
-     * <code>optional string id = 4;</code>
+     * <code>string id = 4;</code>
      */
     java.lang.String getId();
     /**
-     * <code>optional string id = 4;</code>
+     * <code>string id = 4;</code>
      */
     com.google.protobuf.ByteString
         getIdBytes();
 
     /**
-     * <code>optional .MessageOption msgOption = 5;</code>
+     * <code>.MessageOption msgOption = 5;</code>
      */
-    boolean hasMsgOption();
+    int getMsgOptionValue();
     /**
-     * <code>optional .MessageOption msgOption = 5;</code>
+     * <code>.MessageOption msgOption = 5;</code>
      */
     org.sunbird.akka.core.MessageProtos.MessageOption getMsgOption();
 
     /**
-     * <code>optional string payload = 6;</code>
+     * <code>.google.protobuf.Value payload = 6;</code>
      */
     boolean hasPayload();
     /**
-     * <code>optional string payload = 6;</code>
+     * <code>.google.protobuf.Value payload = 6;</code>
      */
-    java.lang.String getPayload();
+    com.google.protobuf.Value getPayload();
     /**
-     * <code>optional string payload = 6;</code>
+     * <code>.google.protobuf.Value payload = 6;</code>
      */
-    com.google.protobuf.ByteString
-        getPayloadBytes();
+    com.google.protobuf.ValueOrBuilder getPayloadOrBuilder();
   }
   /**
    * Protobuf type {@code Message}
@@ -205,7 +196,6 @@ public final class MessageProtos {
       performOperation_ = "";
       id_ = "";
       msgOption_ = 0;
-      payload_ = "";
     }
 
     @java.lang.Override
@@ -233,49 +223,50 @@ public final class MessageProtos {
               done = true;
               break;
             case 10: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000001;
-              targetActorName_ = bs;
+              java.lang.String s = input.readStringRequireUtf8();
+
+              targetActorName_ = s;
               break;
             }
             case 18: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000002;
-              sourceActorName_ = bs;
+              java.lang.String s = input.readStringRequireUtf8();
+
+              sourceActorName_ = s;
               break;
             }
             case 26: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000004;
-              performOperation_ = bs;
+              java.lang.String s = input.readStringRequireUtf8();
+
+              performOperation_ = s;
               break;
             }
             case 34: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000008;
-              id_ = bs;
+              java.lang.String s = input.readStringRequireUtf8();
+
+              id_ = s;
               break;
             }
             case 40: {
               int rawValue = input.readEnum();
-                @SuppressWarnings("deprecation")
-              org.sunbird.akka.core.MessageProtos.MessageOption value = org.sunbird.akka.core.MessageProtos.MessageOption.valueOf(rawValue);
-              if (value == null) {
-                unknownFields.mergeVarintField(5, rawValue);
-              } else {
-                bitField0_ |= 0x00000010;
-                msgOption_ = rawValue;
-              }
+
+              msgOption_ = rawValue;
               break;
             }
             case 50: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000020;
-              payload_ = bs;
+              com.google.protobuf.Value.Builder subBuilder = null;
+              if (payload_ != null) {
+                subBuilder = payload_.toBuilder();
+              }
+              payload_ = input.readMessage(com.google.protobuf.Value.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(payload_);
+                payload_ = subBuilder.buildPartial();
+              }
+
               break;
             }
             default: {
-              if (!parseUnknownField(
+              if (!parseUnknownFieldProto3(
                   input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
@@ -306,17 +297,10 @@ public final class MessageProtos {
               org.sunbird.akka.core.MessageProtos.Message.class, org.sunbird.akka.core.MessageProtos.Message.Builder.class);
     }
 
-    private int bitField0_;
     public static final int TARGETACTORNAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object targetActorName_;
     /**
-     * <code>required string targetActorName = 1;</code>
-     */
-    public boolean hasTargetActorName() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>required string targetActorName = 1;</code>
+     * <code>string targetActorName = 1;</code>
      */
     public java.lang.String getTargetActorName() {
       java.lang.Object ref = targetActorName_;
@@ -326,14 +310,12 @@ public final class MessageProtos {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          targetActorName_ = s;
-        }
+        targetActorName_ = s;
         return s;
       }
     }
     /**
-     * <code>required string targetActorName = 1;</code>
+     * <code>string targetActorName = 1;</code>
      */
     public com.google.protobuf.ByteString
         getTargetActorNameBytes() {
@@ -352,13 +334,7 @@ public final class MessageProtos {
     public static final int SOURCEACTORNAME_FIELD_NUMBER = 2;
     private volatile java.lang.Object sourceActorName_;
     /**
-     * <code>optional string sourceActorName = 2;</code>
-     */
-    public boolean hasSourceActorName() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>optional string sourceActorName = 2;</code>
+     * <code>string sourceActorName = 2;</code>
      */
     public java.lang.String getSourceActorName() {
       java.lang.Object ref = sourceActorName_;
@@ -368,14 +344,12 @@ public final class MessageProtos {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          sourceActorName_ = s;
-        }
+        sourceActorName_ = s;
         return s;
       }
     }
     /**
-     * <code>optional string sourceActorName = 2;</code>
+     * <code>string sourceActorName = 2;</code>
      */
     public com.google.protobuf.ByteString
         getSourceActorNameBytes() {
@@ -394,13 +368,7 @@ public final class MessageProtos {
     public static final int PERFORMOPERATION_FIELD_NUMBER = 3;
     private volatile java.lang.Object performOperation_;
     /**
-     * <code>optional string performOperation = 3;</code>
-     */
-    public boolean hasPerformOperation() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional string performOperation = 3;</code>
+     * <code>string performOperation = 3;</code>
      */
     public java.lang.String getPerformOperation() {
       java.lang.Object ref = performOperation_;
@@ -410,14 +378,12 @@ public final class MessageProtos {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          performOperation_ = s;
-        }
+        performOperation_ = s;
         return s;
       }
     }
     /**
-     * <code>optional string performOperation = 3;</code>
+     * <code>string performOperation = 3;</code>
      */
     public com.google.protobuf.ByteString
         getPerformOperationBytes() {
@@ -436,13 +402,7 @@ public final class MessageProtos {
     public static final int ID_FIELD_NUMBER = 4;
     private volatile java.lang.Object id_;
     /**
-     * <code>optional string id = 4;</code>
-     */
-    public boolean hasId() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>optional string id = 4;</code>
+     * <code>string id = 4;</code>
      */
     public java.lang.String getId() {
       java.lang.Object ref = id_;
@@ -452,14 +412,12 @@ public final class MessageProtos {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          id_ = s;
-        }
+        id_ = s;
         return s;
       }
     }
     /**
-     * <code>optional string id = 4;</code>
+     * <code>string id = 4;</code>
      */
     public com.google.protobuf.ByteString
         getIdBytes() {
@@ -478,60 +436,39 @@ public final class MessageProtos {
     public static final int MSGOPTION_FIELD_NUMBER = 5;
     private int msgOption_;
     /**
-     * <code>optional .MessageOption msgOption = 5;</code>
+     * <code>.MessageOption msgOption = 5;</code>
      */
-    public boolean hasMsgOption() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+    public int getMsgOptionValue() {
+      return msgOption_;
     }
     /**
-     * <code>optional .MessageOption msgOption = 5;</code>
+     * <code>.MessageOption msgOption = 5;</code>
      */
     public org.sunbird.akka.core.MessageProtos.MessageOption getMsgOption() {
       @SuppressWarnings("deprecation")
       org.sunbird.akka.core.MessageProtos.MessageOption result = org.sunbird.akka.core.MessageProtos.MessageOption.valueOf(msgOption_);
-      return result == null ? org.sunbird.akka.core.MessageProtos.MessageOption.SEND_AND_FORGET : result;
+      return result == null ? org.sunbird.akka.core.MessageProtos.MessageOption.UNRECOGNIZED : result;
     }
 
     public static final int PAYLOAD_FIELD_NUMBER = 6;
-    private volatile java.lang.Object payload_;
+    private com.google.protobuf.Value payload_;
     /**
-     * <code>optional string payload = 6;</code>
+     * <code>.google.protobuf.Value payload = 6;</code>
      */
     public boolean hasPayload() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
+      return payload_ != null;
     }
     /**
-     * <code>optional string payload = 6;</code>
+     * <code>.google.protobuf.Value payload = 6;</code>
      */
-    public java.lang.String getPayload() {
-      java.lang.Object ref = payload_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          payload_ = s;
-        }
-        return s;
-      }
+    public com.google.protobuf.Value getPayload() {
+      return payload_ == null ? com.google.protobuf.Value.getDefaultInstance() : payload_;
     }
     /**
-     * <code>optional string payload = 6;</code>
+     * <code>.google.protobuf.Value payload = 6;</code>
      */
-    public com.google.protobuf.ByteString
-        getPayloadBytes() {
-      java.lang.Object ref = payload_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        payload_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public com.google.protobuf.ValueOrBuilder getPayloadOrBuilder() {
+      return getPayload();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -541,10 +478,6 @@ public final class MessageProtos {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasTargetActorName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -552,23 +485,23 @@ public final class MessageProtos {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (!getTargetActorNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, targetActorName_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (!getSourceActorNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sourceActorName_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (!getPerformOperationBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, performOperation_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (!getIdBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, id_);
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (msgOption_ != org.sunbird.akka.core.MessageProtos.MessageOption.SEND_AND_FORGET.getNumber()) {
         output.writeEnum(5, msgOption_);
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, payload_);
+      if (payload_ != null) {
+        output.writeMessage(6, getPayload());
       }
       unknownFields.writeTo(output);
     }
@@ -579,24 +512,25 @@ public final class MessageProtos {
       if (size != -1) return size;
 
       size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (!getTargetActorNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, targetActorName_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (!getSourceActorNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sourceActorName_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (!getPerformOperationBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, performOperation_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (!getIdBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, id_);
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (msgOption_ != org.sunbird.akka.core.MessageProtos.MessageOption.SEND_AND_FORGET.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(5, msgOption_);
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, payload_);
+      if (payload_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(6, getPayload());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -614,30 +548,15 @@ public final class MessageProtos {
       org.sunbird.akka.core.MessageProtos.Message other = (org.sunbird.akka.core.MessageProtos.Message) obj;
 
       boolean result = true;
-      result = result && (hasTargetActorName() == other.hasTargetActorName());
-      if (hasTargetActorName()) {
-        result = result && getTargetActorName()
-            .equals(other.getTargetActorName());
-      }
-      result = result && (hasSourceActorName() == other.hasSourceActorName());
-      if (hasSourceActorName()) {
-        result = result && getSourceActorName()
-            .equals(other.getSourceActorName());
-      }
-      result = result && (hasPerformOperation() == other.hasPerformOperation());
-      if (hasPerformOperation()) {
-        result = result && getPerformOperation()
-            .equals(other.getPerformOperation());
-      }
-      result = result && (hasId() == other.hasId());
-      if (hasId()) {
-        result = result && getId()
-            .equals(other.getId());
-      }
-      result = result && (hasMsgOption() == other.hasMsgOption());
-      if (hasMsgOption()) {
-        result = result && msgOption_ == other.msgOption_;
-      }
+      result = result && getTargetActorName()
+          .equals(other.getTargetActorName());
+      result = result && getSourceActorName()
+          .equals(other.getSourceActorName());
+      result = result && getPerformOperation()
+          .equals(other.getPerformOperation());
+      result = result && getId()
+          .equals(other.getId());
+      result = result && msgOption_ == other.msgOption_;
       result = result && (hasPayload() == other.hasPayload());
       if (hasPayload()) {
         result = result && getPayload()
@@ -654,26 +573,16 @@ public final class MessageProtos {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (hasTargetActorName()) {
-        hash = (37 * hash) + TARGETACTORNAME_FIELD_NUMBER;
-        hash = (53 * hash) + getTargetActorName().hashCode();
-      }
-      if (hasSourceActorName()) {
-        hash = (37 * hash) + SOURCEACTORNAME_FIELD_NUMBER;
-        hash = (53 * hash) + getSourceActorName().hashCode();
-      }
-      if (hasPerformOperation()) {
-        hash = (37 * hash) + PERFORMOPERATION_FIELD_NUMBER;
-        hash = (53 * hash) + getPerformOperation().hashCode();
-      }
-      if (hasId()) {
-        hash = (37 * hash) + ID_FIELD_NUMBER;
-        hash = (53 * hash) + getId().hashCode();
-      }
-      if (hasMsgOption()) {
-        hash = (37 * hash) + MSGOPTION_FIELD_NUMBER;
-        hash = (53 * hash) + msgOption_;
-      }
+      hash = (37 * hash) + TARGETACTORNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getTargetActorName().hashCode();
+      hash = (37 * hash) + SOURCEACTORNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getSourceActorName().hashCode();
+      hash = (37 * hash) + PERFORMOPERATION_FIELD_NUMBER;
+      hash = (53 * hash) + getPerformOperation().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + getId().hashCode();
+      hash = (37 * hash) + MSGOPTION_FIELD_NUMBER;
+      hash = (53 * hash) + msgOption_;
       if (hasPayload()) {
         hash = (37 * hash) + PAYLOAD_FIELD_NUMBER;
         hash = (53 * hash) + getPayload().hashCode();
@@ -812,17 +721,21 @@ public final class MessageProtos {
       public Builder clear() {
         super.clear();
         targetActorName_ = "";
-        bitField0_ = (bitField0_ & ~0x00000001);
+
         sourceActorName_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
+
         performOperation_ = "";
-        bitField0_ = (bitField0_ & ~0x00000004);
+
         id_ = "";
-        bitField0_ = (bitField0_ & ~0x00000008);
+
         msgOption_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000010);
-        payload_ = "";
-        bitField0_ = (bitField0_ & ~0x00000020);
+
+        if (payloadBuilder_ == null) {
+          payload_ = null;
+        } else {
+          payload_ = null;
+          payloadBuilder_ = null;
+        }
         return this;
       }
 
@@ -849,33 +762,16 @@ public final class MessageProtos {
       @java.lang.Override
       public org.sunbird.akka.core.MessageProtos.Message buildPartial() {
         org.sunbird.akka.core.MessageProtos.Message result = new org.sunbird.akka.core.MessageProtos.Message(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
         result.targetActorName_ = targetActorName_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
         result.sourceActorName_ = sourceActorName_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
         result.performOperation_ = performOperation_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000008;
-        }
         result.id_ = id_;
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-          to_bitField0_ |= 0x00000010;
-        }
         result.msgOption_ = msgOption_;
-        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-          to_bitField0_ |= 0x00000020;
+        if (payloadBuilder_ == null) {
+          result.payload_ = payload_;
+        } else {
+          result.payload_ = payloadBuilder_.build();
         }
-        result.payload_ = payload_;
-        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -924,33 +820,27 @@ public final class MessageProtos {
 
       public Builder mergeFrom(org.sunbird.akka.core.MessageProtos.Message other) {
         if (other == org.sunbird.akka.core.MessageProtos.Message.getDefaultInstance()) return this;
-        if (other.hasTargetActorName()) {
-          bitField0_ |= 0x00000001;
+        if (!other.getTargetActorName().isEmpty()) {
           targetActorName_ = other.targetActorName_;
           onChanged();
         }
-        if (other.hasSourceActorName()) {
-          bitField0_ |= 0x00000002;
+        if (!other.getSourceActorName().isEmpty()) {
           sourceActorName_ = other.sourceActorName_;
           onChanged();
         }
-        if (other.hasPerformOperation()) {
-          bitField0_ |= 0x00000004;
+        if (!other.getPerformOperation().isEmpty()) {
           performOperation_ = other.performOperation_;
           onChanged();
         }
-        if (other.hasId()) {
-          bitField0_ |= 0x00000008;
+        if (!other.getId().isEmpty()) {
           id_ = other.id_;
           onChanged();
         }
-        if (other.hasMsgOption()) {
-          setMsgOption(other.getMsgOption());
+        if (other.msgOption_ != 0) {
+          setMsgOptionValue(other.getMsgOptionValue());
         }
         if (other.hasPayload()) {
-          bitField0_ |= 0x00000020;
-          payload_ = other.payload_;
-          onChanged();
+          mergePayload(other.getPayload());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -959,9 +849,6 @@ public final class MessageProtos {
 
       @java.lang.Override
       public final boolean isInitialized() {
-        if (!hasTargetActorName()) {
-          return false;
-        }
         return true;
       }
 
@@ -983,17 +870,10 @@ public final class MessageProtos {
         }
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object targetActorName_ = "";
       /**
-       * <code>required string targetActorName = 1;</code>
-       */
-      public boolean hasTargetActorName() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>required string targetActorName = 1;</code>
+       * <code>string targetActorName = 1;</code>
        */
       public java.lang.String getTargetActorName() {
         java.lang.Object ref = targetActorName_;
@@ -1001,16 +881,14 @@ public final class MessageProtos {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            targetActorName_ = s;
-          }
+          targetActorName_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>required string targetActorName = 1;</code>
+       * <code>string targetActorName = 1;</code>
        */
       public com.google.protobuf.ByteString
           getTargetActorNameBytes() {
@@ -1026,36 +904,37 @@ public final class MessageProtos {
         }
       }
       /**
-       * <code>required string targetActorName = 1;</code>
+       * <code>string targetActorName = 1;</code>
        */
       public Builder setTargetActorName(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000001;
+  
         targetActorName_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string targetActorName = 1;</code>
+       * <code>string targetActorName = 1;</code>
        */
       public Builder clearTargetActorName() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         targetActorName_ = getDefaultInstance().getTargetActorName();
         onChanged();
         return this;
       }
       /**
-       * <code>required string targetActorName = 1;</code>
+       * <code>string targetActorName = 1;</code>
        */
       public Builder setTargetActorNameBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000001;
+  checkByteStringIsUtf8(value);
+        
         targetActorName_ = value;
         onChanged();
         return this;
@@ -1063,13 +942,7 @@ public final class MessageProtos {
 
       private java.lang.Object sourceActorName_ = "";
       /**
-       * <code>optional string sourceActorName = 2;</code>
-       */
-      public boolean hasSourceActorName() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>optional string sourceActorName = 2;</code>
+       * <code>string sourceActorName = 2;</code>
        */
       public java.lang.String getSourceActorName() {
         java.lang.Object ref = sourceActorName_;
@@ -1077,16 +950,14 @@ public final class MessageProtos {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            sourceActorName_ = s;
-          }
+          sourceActorName_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>optional string sourceActorName = 2;</code>
+       * <code>string sourceActorName = 2;</code>
        */
       public com.google.protobuf.ByteString
           getSourceActorNameBytes() {
@@ -1102,36 +973,37 @@ public final class MessageProtos {
         }
       }
       /**
-       * <code>optional string sourceActorName = 2;</code>
+       * <code>string sourceActorName = 2;</code>
        */
       public Builder setSourceActorName(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  
         sourceActorName_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional string sourceActorName = 2;</code>
+       * <code>string sourceActorName = 2;</code>
        */
       public Builder clearSourceActorName() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        
         sourceActorName_ = getDefaultInstance().getSourceActorName();
         onChanged();
         return this;
       }
       /**
-       * <code>optional string sourceActorName = 2;</code>
+       * <code>string sourceActorName = 2;</code>
        */
       public Builder setSourceActorNameBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  checkByteStringIsUtf8(value);
+        
         sourceActorName_ = value;
         onChanged();
         return this;
@@ -1139,13 +1011,7 @@ public final class MessageProtos {
 
       private java.lang.Object performOperation_ = "";
       /**
-       * <code>optional string performOperation = 3;</code>
-       */
-      public boolean hasPerformOperation() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional string performOperation = 3;</code>
+       * <code>string performOperation = 3;</code>
        */
       public java.lang.String getPerformOperation() {
         java.lang.Object ref = performOperation_;
@@ -1153,16 +1019,14 @@ public final class MessageProtos {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            performOperation_ = s;
-          }
+          performOperation_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>optional string performOperation = 3;</code>
+       * <code>string performOperation = 3;</code>
        */
       public com.google.protobuf.ByteString
           getPerformOperationBytes() {
@@ -1178,36 +1042,37 @@ public final class MessageProtos {
         }
       }
       /**
-       * <code>optional string performOperation = 3;</code>
+       * <code>string performOperation = 3;</code>
        */
       public Builder setPerformOperation(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  
         performOperation_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional string performOperation = 3;</code>
+       * <code>string performOperation = 3;</code>
        */
       public Builder clearPerformOperation() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        
         performOperation_ = getDefaultInstance().getPerformOperation();
         onChanged();
         return this;
       }
       /**
-       * <code>optional string performOperation = 3;</code>
+       * <code>string performOperation = 3;</code>
        */
       public Builder setPerformOperationBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  checkByteStringIsUtf8(value);
+        
         performOperation_ = value;
         onChanged();
         return this;
@@ -1215,13 +1080,7 @@ public final class MessageProtos {
 
       private java.lang.Object id_ = "";
       /**
-       * <code>optional string id = 4;</code>
-       */
-      public boolean hasId() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>optional string id = 4;</code>
+       * <code>string id = 4;</code>
        */
       public java.lang.String getId() {
         java.lang.Object ref = id_;
@@ -1229,16 +1088,14 @@ public final class MessageProtos {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            id_ = s;
-          }
+          id_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>optional string id = 4;</code>
+       * <code>string id = 4;</code>
        */
       public com.google.protobuf.ByteString
           getIdBytes() {
@@ -1254,36 +1111,37 @@ public final class MessageProtos {
         }
       }
       /**
-       * <code>optional string id = 4;</code>
+       * <code>string id = 4;</code>
        */
       public Builder setId(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000008;
+  
         id_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional string id = 4;</code>
+       * <code>string id = 4;</code>
        */
       public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        
         id_ = getDefaultInstance().getId();
         onChanged();
         return this;
       }
       /**
-       * <code>optional string id = 4;</code>
+       * <code>string id = 4;</code>
        */
       public Builder setIdBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000008;
+  checkByteStringIsUtf8(value);
+        
         id_ = value;
         onChanged();
         return this;
@@ -1291,120 +1149,169 @@ public final class MessageProtos {
 
       private int msgOption_ = 0;
       /**
-       * <code>optional .MessageOption msgOption = 5;</code>
+       * <code>.MessageOption msgOption = 5;</code>
        */
-      public boolean hasMsgOption() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
+      public int getMsgOptionValue() {
+        return msgOption_;
       }
       /**
-       * <code>optional .MessageOption msgOption = 5;</code>
+       * <code>.MessageOption msgOption = 5;</code>
+       */
+      public Builder setMsgOptionValue(int value) {
+        msgOption_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.MessageOption msgOption = 5;</code>
        */
       public org.sunbird.akka.core.MessageProtos.MessageOption getMsgOption() {
         @SuppressWarnings("deprecation")
         org.sunbird.akka.core.MessageProtos.MessageOption result = org.sunbird.akka.core.MessageProtos.MessageOption.valueOf(msgOption_);
-        return result == null ? org.sunbird.akka.core.MessageProtos.MessageOption.SEND_AND_FORGET : result;
+        return result == null ? org.sunbird.akka.core.MessageProtos.MessageOption.UNRECOGNIZED : result;
       }
       /**
-       * <code>optional .MessageOption msgOption = 5;</code>
+       * <code>.MessageOption msgOption = 5;</code>
        */
       public Builder setMsgOption(org.sunbird.akka.core.MessageProtos.MessageOption value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        bitField0_ |= 0x00000010;
+        
         msgOption_ = value.getNumber();
         onChanged();
         return this;
       }
       /**
-       * <code>optional .MessageOption msgOption = 5;</code>
+       * <code>.MessageOption msgOption = 5;</code>
        */
       public Builder clearMsgOption() {
-        bitField0_ = (bitField0_ & ~0x00000010);
+        
         msgOption_ = 0;
         onChanged();
         return this;
       }
 
-      private java.lang.Object payload_ = "";
+      private com.google.protobuf.Value payload_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.Value, com.google.protobuf.Value.Builder, com.google.protobuf.ValueOrBuilder> payloadBuilder_;
       /**
-       * <code>optional string payload = 6;</code>
+       * <code>.google.protobuf.Value payload = 6;</code>
        */
       public boolean hasPayload() {
-        return ((bitField0_ & 0x00000020) == 0x00000020);
+        return payloadBuilder_ != null || payload_ != null;
       }
       /**
-       * <code>optional string payload = 6;</code>
+       * <code>.google.protobuf.Value payload = 6;</code>
        */
-      public java.lang.String getPayload() {
-        java.lang.Object ref = payload_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            payload_ = s;
+      public com.google.protobuf.Value getPayload() {
+        if (payloadBuilder_ == null) {
+          return payload_ == null ? com.google.protobuf.Value.getDefaultInstance() : payload_;
+        } else {
+          return payloadBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.google.protobuf.Value payload = 6;</code>
+       */
+      public Builder setPayload(com.google.protobuf.Value value) {
+        if (payloadBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
           }
-          return s;
+          payload_ = value;
+          onChanged();
         } else {
-          return (java.lang.String) ref;
+          payloadBuilder_.setMessage(value);
         }
+
+        return this;
       }
       /**
-       * <code>optional string payload = 6;</code>
-       */
-      public com.google.protobuf.ByteString
-          getPayloadBytes() {
-        java.lang.Object ref = payload_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          payload_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string payload = 6;</code>
+       * <code>.google.protobuf.Value payload = 6;</code>
        */
       public Builder setPayload(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000020;
-        payload_ = value;
-        onChanged();
+          com.google.protobuf.Value.Builder builderForValue) {
+        if (payloadBuilder_ == null) {
+          payload_ = builderForValue.build();
+          onChanged();
+        } else {
+          payloadBuilder_.setMessage(builderForValue.build());
+        }
+
         return this;
       }
       /**
-       * <code>optional string payload = 6;</code>
+       * <code>.google.protobuf.Value payload = 6;</code>
+       */
+      public Builder mergePayload(com.google.protobuf.Value value) {
+        if (payloadBuilder_ == null) {
+          if (payload_ != null) {
+            payload_ =
+              com.google.protobuf.Value.newBuilder(payload_).mergeFrom(value).buildPartial();
+          } else {
+            payload_ = value;
+          }
+          onChanged();
+        } else {
+          payloadBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.Value payload = 6;</code>
        */
       public Builder clearPayload() {
-        bitField0_ = (bitField0_ & ~0x00000020);
-        payload_ = getDefaultInstance().getPayload();
-        onChanged();
+        if (payloadBuilder_ == null) {
+          payload_ = null;
+          onChanged();
+        } else {
+          payload_ = null;
+          payloadBuilder_ = null;
+        }
+
         return this;
       }
       /**
-       * <code>optional string payload = 6;</code>
+       * <code>.google.protobuf.Value payload = 6;</code>
        */
-      public Builder setPayloadBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000020;
-        payload_ = value;
+      public com.google.protobuf.Value.Builder getPayloadBuilder() {
+        
         onChanged();
-        return this;
+        return getPayloadFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.google.protobuf.Value payload = 6;</code>
+       */
+      public com.google.protobuf.ValueOrBuilder getPayloadOrBuilder() {
+        if (payloadBuilder_ != null) {
+          return payloadBuilder_.getMessageOrBuilder();
+        } else {
+          return payload_ == null ?
+              com.google.protobuf.Value.getDefaultInstance() : payload_;
+        }
+      }
+      /**
+       * <code>.google.protobuf.Value payload = 6;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.Value, com.google.protobuf.Value.Builder, com.google.protobuf.ValueOrBuilder> 
+          getPayloadFieldBuilder() {
+        if (payloadBuilder_ == null) {
+          payloadBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Value, com.google.protobuf.Value.Builder, com.google.protobuf.ValueOrBuilder>(
+                  getPayload(),
+                  getParentForChildren(),
+                  isClean());
+          payload_ = null;
+        }
+        return payloadBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
+        return super.setUnknownFieldsProto3(unknownFields);
       }
 
       @java.lang.Override
@@ -1427,7 +1334,7 @@ public final class MessageProtos {
       return DEFAULT_INSTANCE;
     }
 
-    @java.lang.Deprecated public static final com.google.protobuf.Parser<Message>
+    private static final com.google.protobuf.Parser<Message>
         PARSER = new com.google.protobuf.AbstractParser<Message>() {
       @java.lang.Override
       public Message parsePartialFrom(
@@ -1468,13 +1375,15 @@ public final class MessageProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\rMessage.proto\"\225\001\n\007Message\022\027\n\017targetAct" +
-      "orName\030\001 \002(\t\022\027\n\017sourceActorName\030\002 \001(\t\022\030\n" +
-      "\020performOperation\030\003 \001(\t\022\n\n\002id\030\004 \001(\t\022!\n\tm" +
-      "sgOption\030\005 \001(\0162\016.MessageOption\022\017\n\007payloa" +
-      "d\030\006 \001(\t*;\n\rMessageOption\022\023\n\017SEND_AND_FOR" +
-      "GET\020\000\022\025\n\021GET_BACK_RESPONSE\020\001B&\n\025org.sunb" +
-      "ird.akka.coreB\rMessageProtos"
+      "\n\rMessage.proto\032\034google/protobuf/struct." +
+      "proto\"\255\001\n\007Message\022\027\n\017targetActorName\030\001 \001" +
+      "(\t\022\027\n\017sourceActorName\030\002 \001(\t\022\030\n\020performOp" +
+      "eration\030\003 \001(\t\022\n\n\002id\030\004 \001(\t\022!\n\tmsgOption\030\005" +
+      " \001(\0162\016.MessageOption\022\'\n\007payload\030\006 \001(\0132\026." +
+      "google.protobuf.Value*;\n\rMessageOption\022\023" +
+      "\n\017SEND_AND_FORGET\020\000\022\025\n\021GET_BACK_RESPONSE" +
+      "\020\001B&\n\025org.sunbird.akka.coreB\rMessageProt" +
+      "osb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1487,6 +1396,7 @@ public final class MessageProtos {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          com.google.protobuf.StructProto.getDescriptor(),
         }, assigner);
     internal_static_Message_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -1494,6 +1404,7 @@ public final class MessageProtos {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Message_descriptor,
         new java.lang.String[] { "TargetActorName", "SourceActorName", "PerformOperation", "Id", "MsgOption", "Payload", });
+    com.google.protobuf.StructProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

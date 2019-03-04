@@ -30,6 +30,10 @@ public class SunbirdActorFactory {
         this.actorScanPackage = actorScanPackage;
     }
 
+    /**
+     * Inits the basic needs of the utility library
+     * @param name
+     */
     public void init(String name) {
         createActorSystem(name);
         createRouter();
@@ -37,11 +41,18 @@ public class SunbirdActorFactory {
         printCache();
     }
 
+    /**
+     * Creates the actor system
+     * @param name
+     */
     private void createActorSystem(String name) {
         Config config = configProcessor.getConfig();
         actorSystem = ActorSystem.create(name, config.getConfig(name));
     }
 
+    /**
+     * Creates a router
+     */
     private void createRouter() {
         router = actorSystem.actorOf(
                 FromConfig.getInstance()
@@ -51,6 +62,10 @@ public class SunbirdActorFactory {
         ActorCache.instance().add(Router.ROUTER_NAME, router);
     }
 
+    /**
+     * Gets actors that are annotated "@SunbirdActor"
+     * @return
+     */
     private Set<Class<? extends BaseActor>> getActors() {
         synchronized (Router.class) {
             Reflections reflections = new Reflections(actorScanPackage);
@@ -59,6 +74,10 @@ public class SunbirdActorFactory {
         }
     }
 
+    /**
+     * Init actors both local and remote
+     * @param actors
+     */
     private void initActors(Set<Class<? extends BaseActor>> actors) {
         ActorCache actorCache = ActorCache.instance();
 
@@ -79,7 +98,6 @@ public class SunbirdActorFactory {
                 ConfigObject valObj = (ConfigObject) val;
                 if (valObj.containsKey("remote")) {
                     String remotePath = valObj.get("remote").render().replace("\"","");
-                    //ActorRef ref = this.actorSystem.actorSelection(remotePath).anchor();
                     ActorSelection selection =
                             this.actorSystem.actorSelection(remotePath);
                     actorCache.add(stringConfigValueEntry.getKey().substring(1), selection);
@@ -99,6 +117,12 @@ public class SunbirdActorFactory {
         return dispatcher;
     }
 
+    /**
+     * Creates an actor
+     * @param actorContext
+     * @param actor
+     * @return
+     */
     private ActorRef createActor(
             ActorSystem actorContext,
             Class<? extends BaseActor> actor) {

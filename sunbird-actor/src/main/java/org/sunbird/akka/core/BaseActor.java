@@ -5,6 +5,10 @@ import akka.actor.ActorSelection;
 import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import com.google.protobuf.Any;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.Struct;
+import com.google.protobuf.Value;
 
 /**
  * An abstract actor
@@ -39,12 +43,18 @@ public abstract class BaseActor extends UntypedAbstractActor {
 
     }
 
-    protected void onReceiveException(MessageProtos.Message message, Throwable exception) {
+
+    protected void onResponse(MessageProtos.Message message, Throwable exception) {
         logger.info("Exception in message processing for {} :: message: {}", message.getSourceActorName(), exception.getMessage(), exception);
-        Message errMsg = new Message(message.getSourceActorName(),
-                message.getTargetActorName());
-        errMsg.setPerformOperation("handleFailure");
-        errMsg.setPayload(exception);
+        MessageProtos.Message.Builder errMsgBldr = MessageProtos.Message.newBuilder(message);
+        if (exception != null) {
+            errMsgBldr.setPerformOperation("handleFailure");
+
+            Value.Builder payloadBuilder = errMsgBldr.getPayloadBuilder();
+            payloadBuilder.setStringValueBytes(ByteString.copyFromUtf8(exception.getMessage()));
+        }
+
+        MessageProtos.Message errMsg = errMsgBldr.build();
 
         // Tell the source about the exception
         ActorRef localActor = ActorCache.instance().get(errMsg.getSourceActorName());

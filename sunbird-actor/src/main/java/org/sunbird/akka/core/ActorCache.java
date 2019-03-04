@@ -17,7 +17,15 @@ public class ActorCache {
     private static ActorCache cacheRef = null;
     private static Boolean localLock = false;
 
+    /**
+     * Disallow external instantiation
+     */
     private ActorCache() {}
+
+    /**
+     * Externally used to get an instance of this class
+     * @return
+     */
     public static ActorCache instance() {
         if (!localLock) {
             synchronized (localLock) {
@@ -30,10 +38,20 @@ public class ActorCache {
         return cacheRef;
     }
 
+    /**
+     * Add the ActorRef to the cache
+     * @param absName
+     * @param actor
+     */
     public void add(String absName, ActorRef actor) {
         routingMap.put(absName, actor);
     }
 
+    /**
+     * Add the ActorRef to the cache
+     * @param absName
+     * @param actor
+     */
     public void add(String absName, ActorSelection actor) {
         remoteRoutingMap.put(absName, actor);
     }
