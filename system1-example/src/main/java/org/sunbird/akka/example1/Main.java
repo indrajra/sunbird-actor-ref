@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
         Config config = ConfigFactory.parseResources("system1.conf");
 
-        SunbirdActorFactory sunbirdActorFactory = new SunbirdActorFactory(config, "org.sunbird.akka.example1");
+        SunbirdActorFactory sunbirdActorFactory = new SunbirdActorFactory(config, "org.sunbird.akka.example1.actors");
         sunbirdActorFactory.init("MyFirstActorSystem");
 
         // Case 1 - Sending to an invalid actor
@@ -27,7 +27,8 @@ public class Main {
 
         // Case 3 - Sending to a valid actor
         MessageProtos.Message sendHelloMessage = MessageProtos.Message.newBuilder()
-                                                .setTargetActorName("SendHello").build();
+                                                .setTargetActorName("SendHello")
+                                                .build();
         ActorCache.instance().get(Router.ROUTER_NAME).tell(sendHelloMessage,null);
 
         // Case 4 - Sending to a valid but bad actor

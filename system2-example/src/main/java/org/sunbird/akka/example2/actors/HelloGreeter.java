@@ -1,12 +1,10 @@
 package org.sunbird.akka.example2.actors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.sunbird.akka.config.SunbirdActor;
 import org.sunbird.akka.core.BaseActor;
 import org.sunbird.akka.core.MessageProtos;
 import org.sunbird.akka.example2.Person;
 
-@SunbirdActor
 public class HelloGreeter extends BaseActor {
     private ObjectMapper mapper = new ObjectMapper();
     @Override

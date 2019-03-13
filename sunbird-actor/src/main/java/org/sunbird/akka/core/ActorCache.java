@@ -2,8 +2,6 @@ package org.sunbird.akka.core;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
-import akka.actor.Address;
-import akka.actor.dsl.Creators;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +10,7 @@ import java.util.Map;
  * Caches the operation and its corresponding ActorRef
  */
 public class ActorCache {
+    // There seems to be no unified way to denote an actorref or actorselection
     private final static Map<String, ActorRef> routingMap = new HashMap<>();
     private final static Map<String, ActorSelection> remoteRoutingMap = new HashMap<>();
     private static ActorCache cacheRef = null;
@@ -66,6 +65,9 @@ public class ActorCache {
 
     protected void print() {
         routingMap.forEach((k,v) -> {
+            System.out.println(k + " -> " + v);
+        });
+        remoteRoutingMap.forEach((k,v) -> {
             System.out.println(k + " -> " + v);
         });
     }

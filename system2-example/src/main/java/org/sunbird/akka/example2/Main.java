@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         Config config = ConfigFactory.parseResources("system2.conf");
 
-        SunbirdActorFactory sunbirdActorFactory = new SunbirdActorFactory(config, "org.sunbird.akka.example2");
+        SunbirdActorFactory sunbirdActorFactory = new SunbirdActorFactory(config, "org.sunbird.akka.example2.actors");
         sunbirdActorFactory.init("MySecondActorSystem");
     }
 }

@@ -22,32 +22,28 @@ public class Router extends BaseActor {
     /**
      * Sunbird Actor router
      */
-    public static final String ROUTER_NAME = "sbarouter";
+    public static final String ROUTER_NAME = "SBRouter";
 
     /**
      * Public to override by implementors
      */
     public static int WAIT_TIME_VALUE = 10;
 
+    // TODO - Could there be a supervisor strategy?
+//    private static SupervisorStrategy strategy =
+//            new OneForOneStrategy(10, Duration.create(1, TimeUnit.MINUTES),
+//                    DeciderBuilder.match(java.net.ConnectException.class, e -> SupervisorStrategy.resume())
+//                            .match(AskTimeoutException.class, e -> SupervisorStrategy.resume())
+//                            .build());
+//
+//    @Override
+//    public SupervisorStrategy supervisorStrategy() {
+//        return strategy;
+//    }
+
     @Override
     public void onReceive(MessageProtos.Message request) {
         route(request);
-    }
-
-    /**
-     * Gets the source actor name who sent this request
-     * If request doesn't contain source, then this identifies from context.
-     * @param request
-     * @return
-     */
-    public String getSourceActorName(MessageProtos.Message request) {
-        String simpleName = request.getSourceActorName();
-        if (simpleName == null || simpleName.isEmpty()) {
-            if (!sender().path().parent().equals(sender().path().root())) {
-                simpleName = sender().path().parent().name();
-            }
-        }
-        return simpleName;
     }
 
     /**
@@ -56,6 +52,10 @@ public class Router extends BaseActor {
      * @return
      */
     public boolean tellToTarget(MessageProtos.Message request) {
+        if (request.getTargetActorName().equals("/")) {
+            return true;
+        }
+
         ActorRef ref = ActorCache.instance().get(request.getTargetActorName());
         ActorSelection actorSelection = null;
         if (ref == null) {
@@ -66,7 +66,7 @@ public class Router extends BaseActor {
                 SEND_AND_FORGET) {
             if (ref != null) {
                 ref.tell(request, self());
-            } else {
+            } else if (actorSelection != null) {
                 actorSelection.tell(request, self());
             }
         } else if (request.getMsgOption() == GET_BACK_RESPONSE) {
@@ -76,24 +76,29 @@ public class Router extends BaseActor {
     }
 
     /**
+     * The source of the message may be different from that of the router
+     * in case of remote calling.
+     * In such cases, this method will inform to the right source.
+     * @param request
+     */
+    public void tellToSource(MessageProtos.Message request) {
+        String sourceName = request.getSourceActorName();
+
+        ActorSelection selection = getContext().actorSelection(sourceName);
+        selection.tell(request, getSelf());
+    }
+
+    /**
      * Routes the message to the relevant target
      * Also sets the source before routing it
      * @param request
      */
     public void route(MessageProtos.Message request) {
-        // set source
-        String simpleSource = getSourceActorName(request);
-        MessageProtos.Message msgToSend = MessageProtos.Message.newBuilder(request).setSourceActorName(simpleSource).build();
-
-        String targetActorName = request.getTargetActorName();
-        if (msgToSend.getSourceActorName() != null && request.getTargetActorName() != null &&
-                targetActorName.equals(msgToSend.getSourceActorName())) {
-            logger.error("Eh! sending messages to self. Recheck logic");
-            return;
-        }
-
-        if (!tellToTarget(msgToSend)) {
-            onResponse(msgToSend, new Exception("Actor not found"));
+        if (!request.getPerformOperation().equals(ON_FAILURE_METHOD_NAME) ||
+                !request.getPerformOperation().equals(ON_SUCCESS_METHOD_NAME)) {
+            if (!tellToTarget(request)) {
+                onResponse(request, null, new Exception("Actor not found"));
+            }
         }
     }
 
@@ -107,29 +112,37 @@ public class Router extends BaseActor {
     private boolean route(ActorSelection router, ActorRef ref, MessageProtos.Message message, ExecutionContext ec) {
         logger.info("Actor Service Call start for api {}", message.getTargetActorName());
         Timeout timeout = new Timeout(Duration.create(WAIT_TIME_VALUE, TimeUnit.SECONDS));
-        Future<Object> future;
+        Future<Object> future = null;
         if (router == null) {
             future = Patterns.ask(ref, message, timeout);
         } else {
             future = Patterns.ask(router, message, timeout);
         }
+
         future.onComplete(
                 new OnComplete<Object>() {
                     @Override
                     public void onComplete(Throwable failure, Object result) {
-//                        if (failure instanceof AskTimeoutException) {
-//                            logger.info(sender().path().name() + "AskTimeoutException");
-//                        } else
                         if (failure != null) {
                             // We got a failure, handle it here
                             logger.error(failure.getMessage(), failure);
                             failure.printStackTrace();
                         }
-                        onResponse(message, failure);
+                        onResponse(message, result, failure);
                     }
                 },
                 ec);
         return true;
+    }
+
+    protected void onSuccess(MessageProtos.Message request) {
+        // divert this to the right source
+        tellToSource(request);
+    }
+
+    protected void onFailure(MessageProtos.Message request) {
+        // divert this to the right source.
+        tellToSource(request);
     }
 }
 

@@ -10,11 +10,8 @@ import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
-import org.reflections.Reflections;
 import org.sunbird.akka.config.ConfigProcessor;
-import org.sunbird.akka.config.SunbirdActor;
 
-import java.util.Set;
 
 /**
  * This class will be responsible for bringing up the actor system and actors.
@@ -37,7 +34,8 @@ public class SunbirdActorFactory {
     public void init(String name) {
         createActorSystem(name);
         createRouter();
-        initActors(getActors());
+        //createDeadLetterActor();
+        initActors();
         printCache();
     }
 
@@ -58,59 +56,54 @@ public class SunbirdActorFactory {
                 FromConfig.getInstance()
                         .props(
                                 Props.create(Router.class).withDispatcher(getDispatcherName(Router.class))),
-                Router.class.getSimpleName());
+                Router.ROUTER_NAME);
         ActorCache.instance().add(Router.ROUTER_NAME, router);
     }
 
     /**
-     * Gets actors that are annotated "@SunbirdActor"
-     * @return
-     */
-    private Set<Class<? extends BaseActor>> getActors() {
-        synchronized (Router.class) {
-            Reflections reflections = new Reflections(actorScanPackage);
-            Set<Class<? extends BaseActor>> actors = reflections.getSubTypesOf(BaseActor.class);
-            return actors;
-        }
-    }
-
-    /**
      * Init actors both local and remote
-     * @param actors
      */
-    private void initActors(Set<Class<? extends BaseActor>> actors) {
+    private void initActors() {
         ActorCache actorCache = ActorCache.instance();
 
-        // Local actors initialization done.
-        for (Class<? extends BaseActor> actor : actors) {
-            SunbirdActor routerDetails = actor.getAnnotation(SunbirdActor.class);
-            if (null != routerDetails) {
-                ActorRef actorRef = createActor(actorSystem, actor);
-                actorCache.add(ActorUtils.getName(actorRef), actorRef);
-            }
-        }
-
-        // Remote actors
         ConfigObject deployed = configProcessor.getConfig().getObject(this.actorSystem.name() + ".akka.actor.deployment");
         deployed.entrySet().forEach(stringConfigValueEntry -> {
             ConfigValue val = stringConfigValueEntry.getValue();
             if (val.valueType().compareTo(ConfigValueType.OBJECT) == 0) {
                 ConfigObject valObj = (ConfigObject) val;
                 if (valObj.containsKey("remote")) {
+                    // Remote actors
                     String remotePath = valObj.get("remote").render().replace("\"","");
                     ActorSelection selection =
                             this.actorSystem.actorSelection(remotePath);
                     actorCache.add(stringConfigValueEntry.getKey().substring(1), selection);
+                } else if (!stringConfigValueEntry.getKey().contains(Router.ROUTER_NAME)) {
+                    // Local actors initialization other than router
+                    ActorRef actorRef = null;
+                    String className = actorScanPackage + "." + stringConfigValueEntry.getKey().substring(1);
+                    try {
+                        actorRef = createLocalActor(actorSystem, ClassLoader.getSystemClassLoader().loadClass(className));
+                        actorCache.add(ActorUtils.getName(actorRef), actorRef);
+                    } catch (ClassNotFoundException notFound) {
+                        // class is not found, looks developer didn't implement
+                        System.out.println(className + " not found.");
+                    }
                 }
             }
         });
     }
 
+    /**
+     * Gets the dispatcher name from the configuration
+     * CAVEAT: The actors are not hierarchical.
+     * @param actor
+     * @return
+     */
     private String getDispatcherName(Class<? extends BaseActor> actor) {
         String completePath = this.actorSystem.name() + ".akka.actor.deployment./" + actor.getSimpleName()+ ".dispatcher";
         String dispatcher = "";
         try {
-            configProcessor.getConfig().getString(completePath);
+            dispatcher = configProcessor.getConfig().getString(completePath);
         } catch (ConfigException missingConfig) {
             // System.out.println("Dispatcher not provided and so default");
         }
@@ -123,9 +116,9 @@ public class SunbirdActorFactory {
      * @param actor
      * @return
      */
-    private ActorRef createActor(
+    private ActorRef createLocalActor(
             ActorSystem actorContext,
-            Class<? extends BaseActor> actor) {
+            Class actor) {
         Props props;
         String dispatcher = getDispatcherName(actor);
 
@@ -135,9 +128,19 @@ public class SunbirdActorFactory {
             props = Props.create(actor);
         }
 
-        ActorRef actorRef = actorContext.actorOf(FromConfig.getInstance().props(props), actor.getSimpleName());
+        String name = actor.getSimpleName();
+        ActorRef actorRef = actorContext.actorOf(FromConfig.getInstance().props(props), name);
+
         return actorRef;
     }
+
+    // TODO - would it make sense to have a dead letter watcher and send back
+    // an "unreachable" event for all types of messages - tell and ask?
+//    private void createDeadLetterActor() {
+//        final ActorRef actor = actorSystem.actorOf(Props.create(DeadLetterActor.class));
+//        actorSystem.eventStream().subscribe(actor, DeadLetter.class);
+//    }
+
 
     private void printCache() {
         ActorCache.instance().print();
